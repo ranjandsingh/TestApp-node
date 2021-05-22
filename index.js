@@ -21,5 +21,6 @@ fs.createReadStream(dataLoc)
   })
 
   .on("end", () => {
+    if (chunk.length > 0) ParsedData.push(...chunk);
     console.log(`${ParsedData.length} items parssed successfully`);
   });
