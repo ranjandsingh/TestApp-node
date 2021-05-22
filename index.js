@@ -4,6 +4,7 @@ const fs = require("fs");
 const dataLoc = "./testdata.csv";
 
 const ParsedData = [];
+let chunk = [];
 
 fs.createReadStream(dataLoc)
   .on("error", () => {
@@ -12,7 +13,11 @@ fs.createReadStream(dataLoc)
   .pipe(csv())
   .on("data", (row) => {
     console.log(row);
-    ParsedData.push(row);
+    if (chunk.length < 6) chunk.push(row);
+    else {
+      ParsedData.push(...chunk, row);
+      chunk = [];
+    }
   })
 
   .on("end", () => {
