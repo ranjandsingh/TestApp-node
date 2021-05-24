@@ -5,22 +5,24 @@ const dataLoc = "./testdata.csv";
 
 const ParsedData = [];
 let chunk = [];
+let i = 1;
+const SteamSource = fs.createReadStream(dataLoc, { highWaterMark: 256 * 1024 });
 
-fs.createReadStream(dataLoc)
-  .on("error", () => {
-    console.log("Error Reading File");
-  })
-  .pipe(csv())
-  .on("data", (row) => {
-    console.log(row);
-    if (chunk.length < 6) chunk.push(row);
+SteamSource.on("error", () => {
+  console.log("Error Reading File");
+});
+//.pipe(csv())
+SteamSource.on("data", (row) => {
+  SteamSource.pause();
+  console.log(row.toString());
+  SteamSource.resume();
+  /* if (chunk.length < 6) chunk.push(row);
     else {
       ParsedData.push(...chunk, row);
       chunk = [];
-    }
-  })
-
-  .on("end", () => {
-    if (chunk.length > 0) ParsedData.push(...chunk);
-    console.log(`${ParsedData.length} items parssed successfully`);
-  });
+    }*/
+});
+SteamSource.on("end", () => {
+  if (chunk.length > 0) ParsedData.push(...chunk);
+  console.log(`${ParsedData.length} items parssed successfully`);
+});
